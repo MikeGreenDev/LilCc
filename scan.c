@@ -1,14 +1,15 @@
 #include "scan.h"
+#include "defines.h"
 #include "vars.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
-int chrpos(char *s, int c) {
-  char *p;
+int chrpos(char* s, int c) {
+    char* p;
 
-  p = strchr(s, c);
-  return (p ? p - s : -1);
+    p = strchr(s, c);
+    return (p ? p - s : -1);
 }
 
 int nextChar() {
@@ -30,7 +31,7 @@ int nextChar() {
     return c;
 }
 
-int scanInt(char c){
+int scanInt(char c) {
     int k, val = 0;
 
     // Convert each character into an int value
@@ -56,6 +57,7 @@ int scan(char skipWhiteSpace, Token* outToken) {
     // Find the token based the char
     switch (c) {
         case EOF:
+            outToken->token = T_EOF;
             return 0;
         case '+':
             outToken->token = T_PLUS;
@@ -70,9 +72,11 @@ int scan(char skipWhiteSpace, Token* outToken) {
             outToken->token = T_SLASH;
             break;
         default:
-            if (isdigit(c)){
+            if (isdigit(c)) {
                 outToken->intValue = scanInt(c);
                 outToken->token = T_INTLIT;
+            } else {
+                printf("Syntax Error: Unknown token found on Line %d", Line);
             }
             break;
     }

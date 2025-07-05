@@ -63,7 +63,7 @@ ASTnode* opExpr(int ptp) {
 
     tokentype = Tok.token;
     // If token is EOF then it is End of file. So just return the one node
-    if (tokentype == T_EOF)
+    if (tokentype == T_SEMI_COLON)
         return (left);
 
     while (opPrecedence(tokentype) > ptp) {
@@ -74,7 +74,7 @@ ASTnode* opExpr(int ptp) {
         left = astMakeNode(tokentype, left, right, 0);
 
         tokentype = Tok.token;
-        if (tokentype == T_EOF)
+        if (tokentype == T_SEMI_COLON)
             return (left);
     }
 

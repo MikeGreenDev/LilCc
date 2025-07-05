@@ -3,7 +3,38 @@
 #include "vars.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+int nextChar();
+
+int scanWholeWord(char c, int limit, char* outBuffer){
+    int i = 0;
+
+    while (isalpha(c) || isdigit(c)){
+        if (i + 1 > limit){
+            fprintf(stderr, "Reached maximum char length for variables");
+            exit(1);
+        }
+        outBuffer[i++] = c;
+        c = nextChar();
+    }
+    SavedChar = c;
+    outBuffer[i] = '\0';
+    return i;
+}
+
+int matchKeywords(char* c){
+    switch (*c) {
+        case 'p': {
+                    if (!strcmp(c, "print")){
+                        return T_PRINT;
+                    }
+                    break;
+                  }
+    }
+    return 0;
+}
 
 int chrpos(char* s, int c) {
     char* p;
@@ -71,12 +102,25 @@ int scan(char skipWhiteSpace, Token* outToken) {
         case '/':
             outToken->token = T_SLASH;
             break;
+        case ';':
+            outToken->token = T_SEMI_COLON;
+            break;
         default:
             if (isdigit(c)) {
                 outToken->intValue = scanInt(c);
                 outToken->token = T_INTLIT;
+            } else if (isalpha(c)){
+                scanWholeWord(c, MAX_VAR_LENGTH, CurrentWord);
+                TokenTag t;
+                if ((t = matchKeywords(CurrentWord))){
+                    outToken->token = t;
+                    break;
+                }
+                fprintf(stderr, "Syntax Error: Unknown token found on Line %d", Line);
+                exit(1);
             } else {
-                printf("Syntax Error: Unknown token found on Line %d", Line);
+                fprintf(stderr, "Syntax Error: Unknown token found on Line %d", Line);
+                exit(1);
             }
             break;
     }

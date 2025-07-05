@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 static char* regs[] = {"%r8", "%r9", "%r10", "%r11"};
-static int availRegs[4];
+static int availRegs[4] = {1, 1, 1, 1};
 
 void freeAllRegs(void) {
     availRegs[0] = 1;

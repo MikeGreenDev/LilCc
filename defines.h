@@ -3,6 +3,8 @@
 #define true 1
 #define false 0
 
+#define MAX_VAR_LENGTH 512
+
 // Make sure T_MAX_TAGS is ALWAYS at the end. It's used as a sort of
 // null pointer for loops
 #define FOREACH_TAG(TAG)                                                       \
@@ -12,6 +14,8 @@
     TAG(T_STAR)                                                                \
     TAG(T_SLASH)                                                               \
     TAG(T_INTLIT)                                                              \
+    TAG(T_SEMI_COLON)                                                          \
+    TAG(T_PRINT)                                                               \
     TAG(T_MAX_TAGS)
 
 #define GENERATE_ENUM(ENUM) ENUM,

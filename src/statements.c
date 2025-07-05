@@ -11,6 +11,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Call this func on the equals sign
+void setVariable(int idx) {
+    if (Tok.token != T_EQUALS) {
+        fprintf(stderr, "Equals not found after variable when trying to set "
+                        "the variable.\n");
+        exit(1);
+    }
+
+    ASTnode* right = astMakeLeaf(T_LVIDENT, idx);
+
+    scan(true, &Tok);
+    ASTnode* left = opExpr(0);
+    ASTnode* n = astMakeNode(T_ASSIGN, left, right, 0);
+
+    // The variables idx will be stored in the right node & the
+    // expression it's assigned will be in the left
+    transAST(n, -1);
+    freeAllRegs();
+    if (Tok.token == T_SEMI_COLON) {
+        scan(true, &Tok);
+    }
+}
+
 void parseStatements(void) {
     while (1) {
         switch (Tok.token) {
@@ -35,26 +58,9 @@ void parseStatements(void) {
                             Line);
                     exit(1);
                 }
-                ASTnode* right = astMakeLeaf(T_LVIDENT, idx);
 
                 scan(true, &Tok);
-
-                if (Tok.token != T_EQUALS) {
-                    fprintf(stderr, "Equals not found after variable with no "
-                                    "keyword in front of it.\n");
-                    exit(1);
-                }
-                scan(true, &Tok);
-                ASTnode* left = opExpr(0);
-                ASTnode* n = astMakeNode(T_ASSIGN, left, right, 0);
-
-                // The variables idx will be stored in the right node & the
-                // expression it's assigned will be in the left
-                transAST(n, -1);
-                freeAllRegs();
-                if (Tok.token == T_SEMI_COLON) {
-                    scan(true, &Tok);
-                }
+                setVariable(idx);
                 break;
             }
             case T_INT: {
@@ -64,20 +70,21 @@ void parseStatements(void) {
                             "Identifier not found after variable keyword.\n");
                     exit(1);
                 }
-                addSymEntry(CurrentWord);
+                int idx = addSymEntry(CurrentWord);
                 asmGenVar(CurrentWord);
                 scan(true, &Tok);
-                if (Tok.token != T_SEMI_COLON) {
+                if (Tok.token == T_EQUALS) {
+                    setVariable(idx);
+                } else if (Tok.token != T_SEMI_COLON) {
                     fprintf(stderr,
                             "L: %d SemiColon not found after statement.\n",
                             Line);
                     exit(1);
                 }
-                scan(true, &Tok);
                 break;
             }
             case T_EOF:
-                        return;
+                return;
             case T_SEMI_COLON:
             case T_EQUALS:
             case T_PLUS:

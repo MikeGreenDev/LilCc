@@ -1,5 +1,6 @@
 #include "casmTranslator.h"
 #include "defines.h"
+#include "statements.h"
 #define extern_
 #include "vars.h"
 #undef extern_
@@ -28,23 +29,10 @@ int main(int argc, char** argv) {
     // printf("Calculated answer: %d\n", interpretAST(n));
     // createOutFileAsm(n);
 
-    ASTnode* ast;
-    int res;
-    while(1){
-        scan(true, &Tok);
-        if (Tok.token == T_PRINT){
-            scan(true, &Tok);
-        }else{
-            fprintf(stderr, "File needs to start with print (This is temporary)\n");
-            return 1;
-        }
-        ast = opExpr(0);
-        createOutFileAsm(ast);
-
-        if (Tok.token == T_SEMI_COLON || Tok.token == T_EOF){
-            break;
-        }
-    }
+    scan(true, &Tok);
+    asmPreamble();
+    parseStatements();
+    asmPostamble();
 
     fclose(OutFile);
     fclose(InputFile);

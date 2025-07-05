@@ -4,6 +4,7 @@
 #define false 0
 
 #define MAX_VAR_LENGTH 512
+#define MAX_SYMBOL_NUMBER 1024
 
 // Make sure T_MAX_TAGS is ALWAYS at the end. It's used as a sort of
 // null pointer for loops
@@ -14,8 +15,13 @@
     TAG(T_STAR)                                                                \
     TAG(T_SLASH)                                                               \
     TAG(T_INTLIT)                                                              \
+    TAG(T_EQUALS)                                                              \
+    TAG(T_INT)                                                                 \
     TAG(T_SEMI_COLON)                                                          \
     TAG(T_PRINT)                                                               \
+    TAG(T_IDENT)                                                               \
+    TAG(T_LVIDENT)                                                             \
+    TAG(T_ASSIGN)                                                              \
     TAG(T_MAX_TAGS)
 
 #define GENERATE_ENUM(ENUM) ENUM,
@@ -26,6 +32,10 @@ typedef enum TokenTag { FOREACH_TAG(GENERATE_ENUM) } TokenTag;
 static const char* TOKEN_TAG_STRING[] = {FOREACH_TAG(GENERATE_STRING)};
 
 typedef struct {
+    char* name;
+} SymTable;
+
+typedef struct {
     TokenTag token;
     int intValue;
 } Token;
@@ -34,5 +44,8 @@ typedef struct ASTnode {
     int op;
     struct ASTnode* left;
     struct ASTnode* right;
-    int intValue;
+    union value {
+        int intValue;
+        int id;
+    } value;
 } ASTnode;

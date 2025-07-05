@@ -2,6 +2,8 @@
 #include "astTree.h"
 #include "defines.h"
 #include "scan.h"
+#include "symTable.h"
+#include "utils.h"
 #include "vars.h"
 #include <stdlib.h>
 
@@ -12,9 +14,18 @@ static ASTnode* firstNode(void) {
         n = astMakeLeaf(T_INTLIT, Tok.intValue);
         scan(true, &Tok);
         return (n);
+
+    } else if (Tok.token == T_IDENT){
+        int idx = findSymEntry(CurrentWord);
+        if (idx == -1){
+            errPrint("Failed to find SymEntry for variable")
+        }
+        n = astMakeLeaf(T_IDENT, idx);
+        scan(true, &Tok);
+        return (n);
     } else {
         // The first node should be an T_INTLIT
-        fprintf(stderr, "syntax error on line %d, token %d\n", Line, Tok.token);
+        fprintf(stderr, "Syntax Error on Line: %d, Token: %s\n", Line, TOKEN_TAG_STRING[Tok.token]);
         exit(1);
     }
 }
@@ -40,14 +51,14 @@ static int opPrecedence(TokenTag tokenType) {
             break;
         case T_MAX_TAGS:
         default:
-            fprintf(stderr, "Syntax Error on line %d, Token %d\n", Line,
-                    tokenType);
+            fprintf(stderr, "Syntax Error on line %d, Token %s\n", Line,
+                    TOKEN_TAG_STRING[tokenType]);
             exit(1);
             break;
     }
 
     if (prec == 0) {
-        fprintf(stderr, "Syntax Error on line %d, Token %d\n", Line, tokenType);
+        fprintf(stderr, "Syntax Error on line %d, Token %s\n", Line, TOKEN_TAG_STRING[tokenType]);
         exit(1);
     }
     return (prec);
@@ -94,7 +105,7 @@ int interpretAST(ASTnode* n) {
     }
     // Debug: Print what we are about to do
     if (n->op == T_INTLIT) {
-        printf("int %d\n", n->intValue);
+        printf("int %d\n", n->value.intValue);
     } else {
         printf("%d %s %d\n", leftval, TOKEN_TAG_STRING[n->op], rightval);
     }
@@ -109,7 +120,7 @@ int interpretAST(ASTnode* n) {
         case T_SLASH:
             return (leftval / rightval);
         case T_INTLIT:
-            return (n->intValue);
+            return (n->value.intValue);
         default:
             fprintf(stderr, "Unknown AST operator %d\n", n->op);
             exit(1);

@@ -69,7 +69,7 @@ void asmPostamble() {
 
 // Load an integer literal value into a register.
 // Return the number of the register
-int asmLoad(int value) {
+int asmLoadInt(int value) {
     int r = allocReg();
     fprintf(OutFile, "\tmovq\t$%d, %s\n", value, regs[r]);
     return (r);
@@ -115,4 +115,20 @@ void asmPrintInt(int r) {
     fprintf(OutFile, "\tmovq\t%s, %%rdi\n", regs[r]);
     fprintf(OutFile, "\tcall\tprintint\n");
     freeReg(r);
+}
+
+int asmAssignVar(int reg, char* identifier){
+    fprintf(OutFile, "\tmovq\t%s, %s(\%%rip)\n", regs[reg], identifier);
+    return reg;
+}
+
+int asmAssignReg(char* identifier){
+    int r = allocReg();
+    fprintf(OutFile, "\tmovq\t%s(\%%rip), %s\n", identifier, regs[r]);
+    return r;
+}
+
+// TODO: Change the size & alignment
+void asmGenVar(char* identifier){
+    fprintf(OutFile, "\t.comm\t%s,8,8\n", identifier);
 }

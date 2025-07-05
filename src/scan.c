@@ -11,7 +11,7 @@ int nextChar();
 int scanWholeWord(char c, int limit, char* outBuffer){
     int i = 0;
 
-    while (isalpha(c) || isdigit(c)){
+    while (isalpha(c) || isdigit(c) || c == '_'){
         if (i + 1 > limit){
             fprintf(stderr, "Reached maximum char length for variables");
             exit(1);
@@ -29,6 +29,12 @@ int matchKeywords(char* c){
         case 'p': {
                     if (!strcmp(c, "print")){
                         return T_PRINT;
+                    }
+                    break;
+                  }
+        case 'i': {
+                    if (!strcmp(c, "int")){
+                        return T_INT;
                     }
                     break;
                   }
@@ -105,6 +111,9 @@ int scan(char skipWhiteSpace, Token* outToken) {
         case ';':
             outToken->token = T_SEMI_COLON;
             break;
+        case '=':
+            outToken->token = T_EQUALS;
+            break;
         default:
             if (isdigit(c)) {
                 outToken->intValue = scanInt(c);
@@ -116,8 +125,7 @@ int scan(char skipWhiteSpace, Token* outToken) {
                     outToken->token = t;
                     break;
                 }
-                fprintf(stderr, "Syntax Error: Unknown token found on Line %d", Line);
-                exit(1);
+                outToken->token = T_IDENT;
             } else {
                 fprintf(stderr, "Syntax Error: Unknown token found on Line %d", Line);
                 exit(1);

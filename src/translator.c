@@ -1,18 +1,20 @@
 #include "translator.h"
 #include "casmTranslator.h"
+#include "defines.h"
+#include "vars.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-int transAST(ASTnode* n){
+int transAST(ASTnode* n, int reg){
     int leftval, rightval;
 
     // Get the left and right values
     if (n->left) {
-        leftval = transAST(n->left);
+        leftval = transAST(n->left, -1);
     }
 
     if (n->right) {
-        rightval = transAST(n->right);
+        rightval = transAST(n->right, leftval);
     }
 
     switch (n->op) {
@@ -25,16 +27,22 @@ int transAST(ASTnode* n){
         case T_SLASH:
             return asmDiv(leftval, rightval);
         case T_INTLIT:
-            return asmLoad(n->intValue);
+            return asmLoadInt(n->value.intValue);
+        case T_IDENT:
+            return asmAssignReg(SymbolsGlobal[n->value.id].name);
+        case T_LVIDENT:
+            return asmAssignVar(reg, SymbolsGlobal[n->value.id].name);
+        case T_ASSIGN:
+            return rightval;
         default:
-            fprintf(stderr, "Unknown AST operator %d\n", n->op);
+            fprintf(stderr, "Unknown AST operator %s\n", TOKEN_TAG_STRING[n->op]);
             exit(1);
     }
 }
 
 void createOutFileAsm(ASTnode* n){
     asmPreamble();
-    int n2 = transAST(n);
+    int n2 = transAST(n, -1);
     asmPrintInt(n2);
     asmPostamble();
 }

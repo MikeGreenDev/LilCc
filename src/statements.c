@@ -75,7 +75,9 @@ void parseStatements(void) {
                 scan(true, &Tok);
                 if (Tok.token == T_EQUALS) {
                     setVariable(idx);
-                } else if (Tok.token != T_SEMI_COLON) {
+                } else if (Tok.token == T_SEMI_COLON) {
+                    scan(true, &Tok);
+                } else {
                     fprintf(stderr,
                             "L: %d SemiColon not found after statement.\n",
                             Line);

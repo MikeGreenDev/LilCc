@@ -22,6 +22,12 @@
     TAG(T_IDENT)                                                               \
     TAG(T_LVIDENT)                                                             \
     TAG(T_ASSIGN)                                                              \
+    TAG(T_EQ)                                                                  \
+    TAG(T_NEQ)                                                                 \
+    TAG(T_LT)                                                                  \
+    TAG(T_GT)                                                                  \
+    TAG(T_LE)                                                                  \
+    TAG(T_GE)                                                                  \
     TAG(T_MAX_TAGS)
 
 #define GENERATE_ENUM(ENUM) ENUM,

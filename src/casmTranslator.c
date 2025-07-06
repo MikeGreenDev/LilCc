@@ -132,3 +132,35 @@ int asmAssignReg(char* identifier){
 void asmGenVar(char* identifier){
     fprintf(OutFile, "\t.comm\t%s,8,8\n", identifier);
 }
+
+static int asmCompare(int reg1, int reg2, char* type){
+    fprintf(OutFile, "\tcmpq\t%s, %s\n", regs[reg2], regs[reg1]);
+    fprintf(OutFile, "\t%s %sb\n", type, regs[reg2]);
+    fprintf(OutFile, "\tandq $255, %s\n", regs[reg2]);
+    freeReg(reg1);
+    return reg2;
+}
+
+int asmCmpEq(int r1, int r2){
+    return asmCompare(r1, r2, "sete");
+}
+
+int asmCmpNeq(int r1, int r2){
+    return asmCompare(r1, r2, "setne");
+}
+
+int asmCmpLt(int r1, int r2){
+    return asmCompare(r1, r2, "setl");
+}
+
+int asmCmpGt(int r1, int r2){
+    return asmCompare(r1, r2, "setg");
+}
+
+int asmCmpLe(int r1, int r2){
+    return asmCompare(r1, r2, "setle");
+}
+
+int asmCmpGe(int r1, int r2){
+    return asmCompare(r1, r2, "setge");
+}

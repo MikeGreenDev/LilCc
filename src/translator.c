@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int transAST(ASTnode* n, int reg){
+int transAST(ASTnode* n, int reg) {
     int leftval, rightval;
 
     // Get the left and right values
@@ -33,14 +33,28 @@ int transAST(ASTnode* n, int reg){
         case T_LVIDENT:
             return asmAssignVar(reg, SymbolsGlobal[n->value.id].name);
         case T_ASSIGN:
+        case T_EQUALS:
             return rightval;
+        case T_EQ:
+            return asmCmpEq(leftval, rightval);
+        case T_NEQ:
+            return asmCmpNeq(leftval, rightval);
+        case T_LT:
+            return asmCmpLt(leftval, rightval);
+        case T_GT:
+            return asmCmpGt(leftval, rightval);
+        case T_LE:
+            return asmCmpLe(leftval, rightval);
+        case T_GE:
+            return asmCmpGe(leftval, rightval);
         default:
-            fprintf(stderr, "Unknown AST operator %s\n", TOKEN_TAG_STRING[n->op]);
+            fprintf(stderr, "Unknown AST operator %s\n",
+                    TOKEN_TAG_STRING[n->op]);
             exit(1);
     }
 }
 
-void createOutFileAsm(ASTnode* n){
+void createOutFileAsm(ASTnode* n) {
     asmPreamble();
     int n2 = transAST(n, -1);
     asmPrintInt(n2);

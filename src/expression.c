@@ -15,17 +15,17 @@ static ASTnode* firstNode(void) {
         scan(true, &Tok);
         return (n);
 
-    } else if (Tok.token == T_IDENT){
+    } else if (Tok.token == T_IDENT) {
         int idx = findSymEntry(CurrentWord);
-        if (idx == -1){
+        if (idx == -1) {
             errPrint("Failed to find SymEntry for variable")
         }
         n = astMakeLeaf(T_IDENT, idx);
         scan(true, &Tok);
         return (n);
     } else {
-        // The first node should be an T_INTLIT
-        fprintf(stderr, "Syntax Error on Line: %d, Token: %s\n", Line, TOKEN_TAG_STRING[Tok.token]);
+        fprintf(stderr, "Syntax Error: Unknown first token in expression on Line: %d, Token: %s\n", Line,
+                TOKEN_TAG_STRING[Tok.token]);
         exit(1);
     }
 }
@@ -49,6 +49,16 @@ static int opPrecedence(TokenTag tokenType) {
         case T_INTLIT:
             prec = 0;
             break;
+        case T_EQ:
+        case T_NEQ:
+            prec = 30;
+            break;
+        case T_LT:
+        case T_GT:
+        case T_LE:
+        case T_GE:
+            prec = 40;
+            break;
         case T_MAX_TAGS:
         default:
             fprintf(stderr, "Syntax Error on line %d, Token %s\n", Line,
@@ -58,7 +68,8 @@ static int opPrecedence(TokenTag tokenType) {
     }
 
     if (prec == 0) {
-        fprintf(stderr, "Syntax Error on line %d, Token %s\n", Line, TOKEN_TAG_STRING[tokenType]);
+        fprintf(stderr, "Syntax Error on line %d, Token %s\n", Line,
+                TOKEN_TAG_STRING[tokenType]);
         exit(1);
     }
     return (prec);
@@ -73,7 +84,7 @@ ASTnode* opExpr(int ptp) {
     left = firstNode();
 
     tokentype = Tok.token;
-    // If token is EOF then it is End of file. So just return the one node
+    // If token is Semi-colon then it is the end of the statement. So just return the one node
     if (tokentype == T_SEMI_COLON)
         return (left);
 

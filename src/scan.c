@@ -1,5 +1,6 @@
 #include "scan.h"
 #include "defines.h"
+#include "utils.h"
 #include "vars.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -112,7 +113,39 @@ int scan(char skipWhiteSpace, Token* outToken) {
             outToken->token = T_SEMI_COLON;
             break;
         case '=':
-            outToken->token = T_EQUALS;
+            c = nextChar();
+            if (c == '='){
+                outToken->token = T_EQ;
+            }else{
+                outToken->token = T_EQUALS;
+                SavedChar = c;
+            }
+            break;
+        case '!':
+            c = nextChar();
+            if (c == '='){
+                outToken->token = T_NEQ;
+            }else{
+                errPrint("Unknown character after '!'");
+            }
+            break;
+        case '<':
+            c = nextChar();
+            if (c == '='){
+                outToken->token = T_LE;
+            }else{
+                outToken->token = T_LT;
+                SavedChar = c;
+            }
+            break;
+        case '>':
+            c = nextChar();
+            if (c == '='){
+                outToken->token = T_GE;
+            }else{
+                outToken->token = T_GT;
+                SavedChar = c;
+            }
             break;
         default:
             if (isdigit(c)) {

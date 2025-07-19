@@ -28,6 +28,13 @@
     TAG(T_GT)                                                                  \
     TAG(T_LE)                                                                  \
     TAG(T_GE)                                                                  \
+    TAG(T_IF)                                                                  \
+    TAG(T_GLUE)                                                                \
+    TAG(T_ELSE)                                                                \
+    TAG(T_LPAREN)                                                              \
+    TAG(T_RPAREN)                                                              \
+    TAG(T_LBRACE)                                                              \
+    TAG(T_RBRACE)                                                              \
     TAG(T_MAX_TAGS)
 
 #define GENERATE_ENUM(ENUM) ENUM,
@@ -49,6 +56,7 @@ typedef struct {
 typedef struct ASTnode {
     int op;
     struct ASTnode* left;
+    struct ASTnode* mid;
     struct ASTnode* right;
     union value {
         int intValue;

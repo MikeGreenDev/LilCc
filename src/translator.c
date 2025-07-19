@@ -5,16 +5,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int transAST(ASTnode* n, int reg) {
+int label(){
+    static int labelIdx = 0;
+    return labelIdx++;
+}
+
+int transIfAST(ASTnode* n){
+    int lFalse, lEnd;
+
+    if (n->right){
+        lFalse = label();
+    }
+    lEnd = label();
+
+    transAST(n->left, lFalse, n->op);
+    freeAllRegs();
+    transAST(n->mid, -1, n->op);
+    freeAllRegs();
+
+    if (n->right){
+        asmJump(lEnd);
+        asmLabel(lFalse);
+        transAST(n->right, -1, n->op);
+        freeAllRegs();
+    }
+    asmLabel(lEnd);
+    return -1;
+}
+
+int transAST(ASTnode* n, int reg, TokenTag parentTok) {
     int leftval, rightval;
+
+    switch (n->op) {
+        case T_IF:
+            return transIfAST(n);
+        case T_GLUE:
+            transAST(n->left, -1, n->op);
+            freeAllRegs();
+            transAST(n->right, -1, n->op);
+            freeAllRegs();
+            return -1;
+    }
 
     // Get the left and right values
     if (n->left) {
-        leftval = transAST(n->left, -1);
+        leftval = transAST(n->left, -1, n->op);
     }
 
     if (n->right) {
-        rightval = transAST(n->right, leftval);
+        rightval = transAST(n->right, leftval, n->op);
     }
 
     switch (n->op) {
@@ -36,17 +75,20 @@ int transAST(ASTnode* n, int reg) {
         case T_EQUALS:
             return rightval;
         case T_EQ:
-            return asmCmpEq(leftval, rightval);
         case T_NEQ:
-            return asmCmpNeq(leftval, rightval);
         case T_LT:
-            return asmCmpLt(leftval, rightval);
         case T_GT:
-            return asmCmpGt(leftval, rightval);
         case T_LE:
-            return asmCmpLe(leftval, rightval);
         case T_GE:
-            return asmCmpGe(leftval, rightval);
+            if (parentTok == T_IF){
+                return asmCompareJump(n->op, leftval, rightval, reg);
+            }else{
+                return asmCompareSet(n->op, leftval, rightval);
+            }
+        case T_PRINT:
+            asmPrintInt(leftval);
+            freeAllRegs();
+            return -1;
         default:
             fprintf(stderr, "Unknown AST operator %s\n",
                     TOKEN_TAG_STRING[n->op]);
@@ -56,7 +98,7 @@ int transAST(ASTnode* n, int reg) {
 
 void createOutFileAsm(ASTnode* n) {
     asmPreamble();
-    int n2 = transAST(n, -1);
+    int n2 = transAST(n, -1, n->op);
     asmPrintInt(n2);
     asmPostamble();
 }

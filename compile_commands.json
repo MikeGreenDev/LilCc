@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/translator.c.o",
+      "src/translator.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/translator.c",
+    "output": "/home/cas/professional/lilcc/obj/src/translator.c.o"
+  }
+]

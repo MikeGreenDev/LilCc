@@ -85,7 +85,7 @@ ASTnode* opExpr(int ptp) {
 
     tokentype = Tok.token;
     // If token is Semi-colon then it is the end of the statement. So just return the one node
-    if (tokentype == T_SEMI_COLON)
+    if (tokentype == T_SEMI_COLON || tokentype == T_RPAREN)
         return (left);
 
     while (opPrecedence(tokentype) > ptp) {
@@ -93,10 +93,10 @@ ASTnode* opExpr(int ptp) {
 
         right = opExpr(opPrecedence(tokentype));
 
-        left = astMakeNode(tokentype, left, right, 0);
+        left = astMakeNode(tokentype, left, NULL, right, 0);
 
         tokentype = Tok.token;
-        if (tokentype == T_SEMI_COLON)
+        if (tokentype == T_SEMI_COLON || tokentype == T_RPAREN)
             return (left);
     }
 

@@ -11,7 +11,7 @@
 
 
 int main(int argc, char** argv) {
-    Line = 0;
+    Line = 1;
     SavedChar = '\n';
 
     if ((InputFile = fopen(argv[1], "r")) == NULL){
@@ -31,7 +31,8 @@ int main(int argc, char** argv) {
 
     scan(true, &Tok);
     asmPreamble();
-    parseStatements();
+    ASTnode* tree = parseStatements();
+    transAST(tree, -1, 0);
     asmPostamble();
 
     fclose(OutFile);

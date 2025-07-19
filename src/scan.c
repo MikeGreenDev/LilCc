@@ -27,6 +27,12 @@ int scanWholeWord(char c, int limit, char* outBuffer){
 
 int matchKeywords(char* c){
     switch (*c) {
+        case 'e': {
+                      if (!strcmp(c, "else")){
+                          return T_ELSE;
+                      }
+                      break;
+                  }
         case 'p': {
                     if (!strcmp(c, "print")){
                         return T_PRINT;
@@ -36,6 +42,8 @@ int matchKeywords(char* c){
         case 'i': {
                     if (!strcmp(c, "int")){
                         return T_INT;
+                    } else if (!strcmp(c, "if")){
+                        return T_IF;
                     }
                     break;
                   }
@@ -146,6 +154,18 @@ int scan(char skipWhiteSpace, Token* outToken) {
                 outToken->token = T_GT;
                 SavedChar = c;
             }
+            break;
+        case '(':
+            outToken->token = T_LPAREN;
+            break;
+        case ')':
+            outToken->token = T_RPAREN;
+            break;
+        case '{':
+            outToken->token = T_LBRACE;
+            break;
+        case '}':
+            outToken->token = T_RBRACE;
             break;
         default:
             if (isdigit(c)) {

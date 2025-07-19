@@ -1,3 +1,5 @@
 #pragma once
 
-void parseStatements(void);
+#include "defines.h"
+
+ASTnode* parseStatements(void);

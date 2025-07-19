@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 // Call this func on the equals sign
-void setVariable(int idx) {
+ASTnode* setVariable(int idx) {
     if (Tok.token != T_EQUALS) {
         fprintf(stderr, "Equals not found after variable when trying to set "
                         "the variable.\n");
@@ -23,26 +23,46 @@ void setVariable(int idx) {
 
     scan(true, &Tok);
     ASTnode* left = opExpr(0);
-    ASTnode* n = astMakeNode(T_ASSIGN, left, right, 0);
+    ASTnode* n = astMakeNode(T_ASSIGN, left, NULL, right, 0);
 
-    // The variables idx will be stored in the right node & the
-    // expression it's assigned will be in the left
-    transAST(n, -1);
-    freeAllRegs();
     if (Tok.token == T_SEMI_COLON) {
         scan(true, &Tok);
     }
+
+    return n;
 }
 
-void parseStatements(void) {
+ASTnode* ifStatement(void){
+    ASTnode *condAST, *trueAST, *falseAST = NULL;
+
+    match(T_IF, "if");
+    lparen();
+
+    condAST = opExpr(0);
+    rparen();
+
+    trueAST = parseStatements();
+
+    if (Tok.token == T_ELSE){
+        scan(true, &Tok);
+        falseAST = parseStatements();
+    }
+
+    return astMakeNode(T_IF, condAST, trueAST, falseAST, 0);
+}
+
+ASTnode* parseStatements(void) {
+    ASTnode* tree;
+    ASTnode* left = NULL;
+
+    lbrace();
+
     while (1) {
         switch (Tok.token) {
             case T_PRINT: {
                 scan(true, &Tok);
                 ASTnode* n = opExpr(0);
-                int res = transAST(n, -1);
-                asmPrintInt(res);
-                freeAllRegs();
+                tree = astMakeUnary(T_PRINT, n, 0);
                 if (Tok.token == T_SEMI_COLON) {
                     scan(true, &Tok);
                 }
@@ -60,7 +80,7 @@ void parseStatements(void) {
                 }
 
                 scan(true, &Tok);
-                setVariable(idx);
+                tree = setVariable(idx);
                 break;
             }
             case T_INT: {
@@ -73,8 +93,9 @@ void parseStatements(void) {
                 int idx = addSymEntry(CurrentWord);
                 asmGenVar(CurrentWord);
                 scan(true, &Tok);
+                tree = NULL;
                 if (Tok.token == T_EQUALS) {
-                    setVariable(idx);
+                    tree = setVariable(idx);
                 } else if (Tok.token == T_SEMI_COLON) {
                     scan(true, &Tok);
                 } else {
@@ -85,20 +106,26 @@ void parseStatements(void) {
                 }
                 break;
             }
-            case T_EOF:
-                return;
-            case T_SEMI_COLON:
-            case T_EQUALS:
-            case T_PLUS:
-            case T_MINUS:
-            case T_STAR:
-            case T_SLASH:
-            case T_INTLIT:
-            case T_MAX_TAGS:
+            case T_IF: {
+                tree = ifStatement();
+                break;
+            }
+            case T_RBRACE: {
+                rbrace();
+                return left;
+            }
             default:
                 errPrintToken("Statement not found",
                               TOKEN_TAG_STRING[Tok.token]);
                 break;
+        }
+
+        if (tree){
+            if (left == NULL){
+                left = tree;
+            }else{
+                left = astMakeNode(T_GLUE, left, NULL, tree, 0);
+            }
         }
     }
 }

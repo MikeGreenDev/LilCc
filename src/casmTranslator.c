@@ -1,4 +1,6 @@
 #include "casmTranslator.h"
+#include "defines.h"
+#include "utils.h"
 #include "vars.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -163,4 +165,68 @@ int asmCmpLe(int r1, int r2){
 
 int asmCmpGe(int r1, int r2){
     return asmCompare(r1, r2, "setge");
+}
+
+char* astOpToInvJmp(TokenTag t){
+    switch (t) {
+        case T_EQ:
+            return "jne";
+        case T_NEQ:
+            return "je";
+        case T_LT:
+            return "jge";
+        case T_LE:
+            return "jg";
+        case T_GT:
+            return "jle";
+        case T_GE:
+            return "jl";
+        default:
+            errPrint("Failed to convert AST Op to Inv Jmp String");
+            return "";
+    }
+}
+
+// Compare two registers and jump if false.
+int asmCompareJump(int ASTop, int r1, int r2, int label) {
+  fprintf(OutFile, "\tcmpq\t%s, %s\n", regs[r2], regs[r1]);
+  fprintf(OutFile, "\t%s\tL%d\n", astOpToInvJmp(ASTop), label);
+  freeAllRegs();
+  return -1;
+}
+
+char* astOpToSet(TokenTag t){
+    switch (t) {
+        case T_EQ:
+            return "sete";
+        case T_NEQ:
+            return "setne";
+        case T_LT:
+            return "setl";
+        case T_LE:
+            return "setle";
+        case T_GT:
+            return "setg";
+        case T_GE:
+            return "setge";
+        default:
+            errPrint("Failed to convert AST Op to Set String");
+            return "";
+    }
+}
+
+int asmCompareSet(int ASTop, int r1, int r2) {
+  fprintf(OutFile, "\tcmpq\t%s, %s\n", regs[r2], regs[r1]);
+  fprintf(OutFile, "\t%s\t%sb\n", astOpToSet(ASTop), regs[r2]);
+  fprintf(OutFile, "\tmovzbq\t%sb, %s\n", regs[r2], regs[r2]);
+  freeReg(r1);
+  return (r2);
+}
+
+void asmLabel(int l){
+    fprintf(OutFile, "L%d:\n", l);
+}
+
+void asmJump(int l){
+    fprintf(OutFile, "\tjmp\tL%d\n", l);
 }

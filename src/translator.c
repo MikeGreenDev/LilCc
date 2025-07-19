@@ -10,6 +10,21 @@ int label(){
     return labelIdx++;
 }
 
+int transWhileAST(ASTnode* n){
+    int lStart = label();
+    int lEnd = label();
+
+    asmLabel(lStart);
+    transAST(n->left, lEnd, n->op);
+    freeAllRegs();
+    transAST(n->right, -1, n->op);
+    freeAllRegs();
+    asmJump(lStart);
+    asmLabel(lEnd);
+
+    return -1;
+}
+
 int transIfAST(ASTnode* n){
     int lFalse, lEnd;
 
@@ -37,6 +52,8 @@ int transAST(ASTnode* n, int reg, TokenTag parentTok) {
     int leftval, rightval;
 
     switch (n->op) {
+        case T_WHILE_LOOP:
+            return transWhileAST(n);
         case T_IF:
             return transIfAST(n);
         case T_GLUE:
@@ -80,7 +97,7 @@ int transAST(ASTnode* n, int reg, TokenTag parentTok) {
         case T_GT:
         case T_LE:
         case T_GE:
-            if (parentTok == T_IF){
+            if (parentTok == T_IF || parentTok == T_WHILE_LOOP || parentTok == T_FOR_LOOP || parentTok == T_DO_LOOP){
                 return asmCompareJump(n->op, leftval, rightval, reg);
             }else{
                 return asmCompareSet(n->op, leftval, rightval);

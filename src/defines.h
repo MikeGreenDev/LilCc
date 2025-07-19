@@ -35,6 +35,9 @@
     TAG(T_RPAREN)                                                              \
     TAG(T_LBRACE)                                                              \
     TAG(T_RBRACE)                                                              \
+    TAG(T_WHILE_LOOP)                                                               \
+    TAG(T_FOR_LOOP)                                                            \
+    TAG(T_DO_LOOP)                                                             \
     TAG(T_MAX_TAGS)
 
 #define GENERATE_ENUM(ENUM) ENUM,

@@ -32,7 +32,20 @@ ASTnode* setVariable(int idx) {
     return n;
 }
 
-ASTnode* ifStatement(void){
+ASTnode* whileStatement(void) {
+    ASTnode *condAST, *blockAST;
+    match(T_WHILE_LOOP, "while");
+    lparen();
+
+    condAST = opExpr(0);
+    rparen();
+
+    blockAST = parseStatements();
+
+    return astMakeNode(T_WHILE_LOOP, condAST, NULL, blockAST, 0);
+}
+
+ASTnode* ifStatement(void) {
     ASTnode *condAST, *trueAST, *falseAST = NULL;
 
     match(T_IF, "if");
@@ -43,7 +56,7 @@ ASTnode* ifStatement(void){
 
     trueAST = parseStatements();
 
-    if (Tok.token == T_ELSE){
+    if (Tok.token == T_ELSE) {
         scan(true, &Tok);
         falseAST = parseStatements();
     }
@@ -110,6 +123,10 @@ ASTnode* parseStatements(void) {
                 tree = ifStatement();
                 break;
             }
+            case T_WHILE_LOOP: {
+                tree = whileStatement();
+                break;
+            }
             case T_RBRACE: {
                 rbrace();
                 return left;
@@ -120,10 +137,10 @@ ASTnode* parseStatements(void) {
                 break;
         }
 
-        if (tree){
-            if (left == NULL){
+        if (tree) {
+            if (left == NULL) {
                 left = tree;
-            }else{
+            } else {
                 left = astMakeNode(T_GLUE, left, NULL, tree, 0);
             }
         }

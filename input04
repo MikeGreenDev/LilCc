@@ -1,3 +1,0 @@
-int fred = 4;
-int jim = 10;
-print fred + jim;

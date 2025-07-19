@@ -9,11 +9,11 @@
 
 int nextChar();
 
-int scanWholeWord(char c, int limit, char* outBuffer){
+int scanWholeWord(char c, int limit, char* outBuffer) {
     int i = 0;
 
-    while (isalpha(c) || isdigit(c) || c == '_'){
-        if (i + 1 > limit){
+    while (isalpha(c) || isdigit(c) || c == '_') {
+        if (i + 1 > limit) {
             fprintf(stderr, "Reached maximum char length for variables");
             exit(1);
         }
@@ -25,28 +25,34 @@ int scanWholeWord(char c, int limit, char* outBuffer){
     return i;
 }
 
-int matchKeywords(char* c){
+int matchKeywords(char* c) {
     switch (*c) {
         case 'e': {
-                      if (!strcmp(c, "else")){
-                          return T_ELSE;
-                      }
-                      break;
-                  }
+            if (!strcmp(c, "else")) {
+                return T_ELSE;
+            }
+            break;
+        }
         case 'p': {
-                    if (!strcmp(c, "print")){
-                        return T_PRINT;
-                    }
-                    break;
-                  }
+            if (!strcmp(c, "print")) {
+                return T_PRINT;
+            }
+            break;
+        }
         case 'i': {
-                    if (!strcmp(c, "int")){
-                        return T_INT;
-                    } else if (!strcmp(c, "if")){
-                        return T_IF;
-                    }
-                    break;
-                  }
+            if (!strcmp(c, "int")) {
+                return T_INT;
+            } else if (!strcmp(c, "if")) {
+                return T_IF;
+            }
+            break;
+        }
+        case 'w': {
+            if (!strcmp(c, "while")) {
+                return T_WHILE_LOOP;
+            }
+            break;
+        }
     }
     return 0;
 }
@@ -122,35 +128,35 @@ int scan(char skipWhiteSpace, Token* outToken) {
             break;
         case '=':
             c = nextChar();
-            if (c == '='){
+            if (c == '=') {
                 outToken->token = T_EQ;
-            }else{
+            } else {
                 outToken->token = T_EQUALS;
                 SavedChar = c;
             }
             break;
         case '!':
             c = nextChar();
-            if (c == '='){
+            if (c == '=') {
                 outToken->token = T_NEQ;
-            }else{
+            } else {
                 errPrint("Unknown character after '!'");
             }
             break;
         case '<':
             c = nextChar();
-            if (c == '='){
+            if (c == '=') {
                 outToken->token = T_LE;
-            }else{
+            } else {
                 outToken->token = T_LT;
                 SavedChar = c;
             }
             break;
         case '>':
             c = nextChar();
-            if (c == '='){
+            if (c == '=') {
                 outToken->token = T_GE;
-            }else{
+            } else {
                 outToken->token = T_GT;
                 SavedChar = c;
             }
@@ -171,16 +177,17 @@ int scan(char skipWhiteSpace, Token* outToken) {
             if (isdigit(c)) {
                 outToken->intValue = scanInt(c);
                 outToken->token = T_INTLIT;
-            } else if (isalpha(c)){
+            } else if (isalpha(c)) {
                 scanWholeWord(c, MAX_VAR_LENGTH, CurrentWord);
                 TokenTag t;
-                if ((t = matchKeywords(CurrentWord))){
+                if ((t = matchKeywords(CurrentWord))) {
                     outToken->token = t;
                     break;
                 }
                 outToken->token = T_IDENT;
             } else {
-                fprintf(stderr, "Syntax Error: Unknown token found on Line %d", Line);
+                fprintf(stderr, "Syntax Error: Unknown token found on Line %d",
+                        Line);
                 exit(1);
             }
             break;

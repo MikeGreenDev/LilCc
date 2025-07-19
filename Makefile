@@ -17,6 +17,7 @@ OBJ_FILES := $(SRC_FILES:%=$(OBJ_DIR)/%.o)		# compiled .o objects
 
 # On linux I need to use a command called bear to compile the compile_commands.json
 # This let's me use bear without interferring with anyone else's compile commands
+# Note: make prefix="bear --append -- "
 PREFIX := $(prefix)
 
 all: build
@@ -38,6 +39,10 @@ link: scaffold $(OBJ_FILES) # link
 .PHONY: compile
 compile: #compile .c files
 	@echo Compiling...
+
+.PHONY: test
+test: testbed tests/runtests
+	(cd tests; chmod +x runtests; ./runtests)
 
 .PHONY: clean
 clean: # clean build directory

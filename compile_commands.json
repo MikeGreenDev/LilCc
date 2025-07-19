@@ -15,5 +15,141 @@
     "directory": "/home/cas/professional/lilcc",
     "file": "/home/cas/professional/lilcc/src/translator.c",
     "output": "/home/cas/professional/lilcc/obj/src/translator.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/astTree.c.o",
+      "src/astTree.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/astTree.c",
+    "output": "/home/cas/professional/lilcc/obj/src/astTree.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/scan.c.o",
+      "src/scan.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/scan.c",
+    "output": "/home/cas/professional/lilcc/obj/src/scan.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/casmTranslator.c.o",
+      "src/casmTranslator.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/casmTranslator.c",
+    "output": "/home/cas/professional/lilcc/obj/src/casmTranslator.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/utils.c.o",
+      "src/utils.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/utils.c",
+    "output": "/home/cas/professional/lilcc/obj/src/utils.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/symTable.c.o",
+      "src/symTable.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/symTable.c",
+    "output": "/home/cas/professional/lilcc/obj/src/symTable.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/expression.c.o",
+      "src/expression.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/expression.c",
+    "output": "/home/cas/professional/lilcc/obj/src/expression.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/main.c.o",
+      "src/main.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/main.c",
+    "output": "/home/cas/professional/lilcc/obj/src/main.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang",
+      "-g",
+      "-Werror=vla",
+      "-fPIC",
+      "-fdeclspec",
+      "-c",
+      "-D_DEBUG",
+      "-o",
+      "obj/src/statements.c.o",
+      "src/statements.c"
+    ],
+    "directory": "/home/cas/professional/lilcc",
+    "file": "/home/cas/professional/lilcc/src/statements.c",
+    "output": "/home/cas/professional/lilcc/obj/src/statements.c.o"
   }
 ]
